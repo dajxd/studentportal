@@ -1,0 +1,123 @@
+extends layout
+
+block content
+    script(src='https://code.jquery.com/jquery-3.5.0.js')
+    script.
+        let locked = !{lock};
+        // console.log(locked);
+        if (locked) {
+            location.replace('https://www.davesstudents.com');
+        }
+    div#background
+
+    div#updateall
+
+        form(method='get' action='/updater' id='updateform')
+            div.form-group
+                div#dateoptions
+                    select#nameselection.form-control(name='nameselection')
+                        option(val='') Student
+                        // each thing in data
+                        //     option(val=thing.name) #{thing.name}
+                    br
+                    select#dateselection.form-control(name='dateselection')
+                        option(val='') Date
+
+                div#left
+                    h2 Homework:
+                    input#homework1.form-control(type='text', placeholder='Homework 1' name='homework1')
+                    br
+                    input#homework2.form-control(type='text', placeholder='Homework 2' name='homework2')
+                    br
+                    input#homework3.form-control(type='text', placeholder='Homework 3' name='homework3')
+                    br
+                    input#homework4.form-control(type='text', placeholder='Homework 4' name='homework4')
+                    br
+                    textarea#notes.form-control(placeholder='notes' name='notes')
+                    br
+
+                div#right
+
+                    h2 Links:
+                    input#link1title.form-control(type='text', placeholder='Link 1 title' name='link1title')
+                    br
+                    input#link1.form-control(type='text', placeholder='Link 1' name='link1')
+                    br
+                    input#link2title.form-control(type='text', placeholder='Link 2 title' name='link2title')
+                    br
+                    input#link2.form-control(type='text', placeholder='Link 2' name='link2')
+                    br
+                    input#link3title.form-control(type='text', placeholder='Link 3 title' name='link3title')
+                    br
+                    input#link3.form-control(type='text', placeholder='Link 3' name='link3')
+                    br
+                    input#link4title.form-control(type='text', placeholder='Link 4 title' name='link4title')
+                    br
+                    input#link4.form-control(type='text', placeholder='Link 4' name='link4')
+
+
+
+    script.
+
+
+
+        let sdata = JSON.parse('!{JSON.stringify(data)}');
+        $(function () {
+            // populate names
+            let donenames = [];
+            for (item in sdata) {
+                let name = sdata[item].name;
+                if (!donenames.includes(name)) {
+                    $('select[name="nameselection"]').append(new Option(name, name));
+                    donenames.push(name);
+                }
+            }
+            // for when a new student is selected:
+            $('select[name="nameselection"]').change(function () {
+                // clear date options:
+                $('select[name="dateselection"]').empty();
+                let selname = $(this).val();
+                for (lesson in sdata) {
+                    if (sdata[lesson].name == selname) {
+                        let thisdate = sdata[lesson].ldate;
+                        $('select[name="dateselection"]').append(new Option(thisdate, thisdate))
+                    }
+                }
+            });
+            $('select[name="dateselection"]').click(function () {
+
+                for (item in sdata) {
+                    if (sdata[item].name == $('select[name="nameselection"]').val()) {
+                        if (sdata[item].ldate == $('select[name="dateselection"]').val()) {
+                            let work = sdata[item].homework
+                            $('input[name="homework1"]').val(decodeURIComponent(work[1]));
+                            $('input[name="homework2"]').val(decodeURIComponent(work[2]));
+                            $('input[name="homework3"]').val(decodeURIComponent(work[3]));
+                            $('input[name="homework4"]').val(decodeURIComponent(work[4]));
+
+                            let box = sdata[item].links
+                            let titlebox = [];
+                            let urlbox = [];
+                            for (combo in box) {
+                                titlebox.push(combo);
+                                urlbox.push(box[combo]);
+                            }
+                            $('input[name="link1"]').val(decodeURIComponent(urlbox[0]));
+                            $('input[name="link2"]').val(decodeURIComponent(urlbox[1]));
+                            $('input[name="link3"]').val(decodeURIComponent(urlbox[2]));
+                            $('input[name="link4"]').val(decodeURIComponent(urlbox[3]));
+                            $('input[name="link1title"]').val(decodeURIComponent(titlebox[0]));
+                            $('input[name="link2title"]').val(decodeURIComponent(titlebox[1]));
+                            $('input[name="link3title"]').val(decodeURIComponent(titlebox[2]));
+                            $('input[name="link4title"]').val(decodeURIComponent(titlebox[3]));
+                            $('textarea[name="notes"]').val(decodeURIComponent(sdata[item].notes));
+                        }
+                    }
+                }
+                $("input").each(function () {
+                    if ($(this).val() == 'undefined') {
+                        $(this).val('');
+                    }
+                });
+            });
+        });

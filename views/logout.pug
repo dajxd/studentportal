@@ -1,0 +1,9 @@
+extends layout
+
+block content
+    h1 Logged out! Going home
+
+    Script.
+        setTimeout(function(){
+        location.assign("/");
+        }, 500);

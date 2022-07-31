@@ -1,0 +1,40 @@
+extends layout
+
+block content
+    div#background
+
+    div#allusers
+        h1#hiname Hey #{name}!
+        div.usersection
+            h2 Homework
+            ul
+                each val,key  in homework
+                    if decodeURIComponent(val) != "undefined"
+                        li= decodeURIComponent(val)
+        div.usersection#notesdiv
+            h2 Notes
+            p#userpagenotes #{decodeURIComponent(notes)}
+        div.usersection
+            h2 Resources:
+            each val, key in links
+                if decodeURIComponent(val) != "undefined"
+                    a(href=decodeURIComponent(val))=decodeURIComponent(key)
+                    p
+        div.usersection
+            form(method='get' action='/updatepass' id='updatepasswordform')
+
+                input#newpass(type='text', placeholder='Set New Password' name='newpass')
+                input#name(placeholder=name, type='hidden' name='name')
+                br
+                button#submit.btn.btn-primary(type='submit') Submit
+                br
+            form(method='get' action='/logout' id='logoutbutton')
+                button#logout.btn.btn-primary(type='submit') Log Out
+    script(src='https://code.jquery.com/jquery-3.5.0.js')
+    script.
+        $(function () {
+            let sname = JSON.parse('!{JSON.stringify(name)}');
+            $('input[name="name"]').val(sname);
+        });
+
+

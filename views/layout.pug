@@ -1,0 +1,15 @@
+doctype html
+html
+    head
+        script.
+             if (location.protocol !== 'https:') {
+                 location.replace(`https:${location.href.substring(location.protocol.length)}`);
+             }
+             // If I saw this in the wild I'd feel anger and pity but here we are. Low stakes and low funds.
+
+        title= title
+        link(rel="icon", href='/images/favicon.ico')
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel="stylesheet", href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap")
+    body
+        block content

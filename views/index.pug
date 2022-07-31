@@ -1,0 +1,48 @@
+extends layout
+
+block content
+    script(src='https://code.jquery.com/jquery-3.5.0.js')
+
+
+    div#background
+
+    div#bubblebackground
+    div#all
+
+        h3#indextitle=title
+        form(method='post' action='/')
+            div#login.form-group
+                input#name.form-control(type='text' placeholder='First Name' name='name')
+                br
+                input#password.form-control(placeholder='Password' name='password' type='password')
+                br
+                button#submitbutton.btn.btn-primary(type='submit') Submit
+                br
+            center
+                br
+                h3#error #{error}
+
+
+    script.
+        let bMobile =
+            navigator.userAgent.indexOf("Mobile") !== -1 ||
+            navigator.userAgent.indexOf("iPhone") !== -1 ||
+            navigator.userAgent.indexOf("Android") !== -1 ||
+            navigator.userAgent.indexOf("Windows Phone") !== -1;
+
+
+        let sheet = document.createElement('style')
+        if (bMobile){
+            sheet.innerHTML = "/*mobile*/ " + "form {margin: auto;}  body {font-size: 2.5em;} " +
+                "#indextitle {margin-bottom:0; font-size:2.5em;}#login {text-align: center;} " +
+                "#bubblebackground, #all {width:900px;height:400px; padding-bottom: 40px; padding-top:20px;}" +
+                "#all p {font-size:1em;} #submitbutton   {width: 150px; height: 70px;}" +
+                "input {height: 70px; width: 250px; font-size: 1em; margin-top:25px;}";
+        }
+        else {
+            sheet.innerHTML = "/*desktop*/ " +"form {margin: auto;}  body {font-size: 1.5em;} " +
+                "h2 {color:white; margin-bottom:0;}#login {text-align: center;} " +
+                "#submitbutton {} input {}}";
+        }
+        document.body.appendChild(sheet);
+

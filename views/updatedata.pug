@@ -1,0 +1,131 @@
+extends layout
+
+block content
+    script(src='https://code.jquery.com/jquery-3.5.0.js')
+
+    script.
+        let locked = !{lock};
+        console.log(locked);
+        if (locked) {
+            location.replace('https://www.davesstudents.com');
+        }
+    div#background
+
+    div#updateall
+
+        form(method='get' action='/updater' id='updateform')
+            div.form-group
+
+                select#nameselection.form-control(name='nameselection')
+                    option(val='') Choose a Student
+                    each thing in data
+                        option(val=thing.name) #{thing.name}
+                    option(val='addnew') New Student
+                div#left
+                    h2 Homework:
+                    input#homework1.form-control(type='text', placeholder='Homework 1' name='homework1')
+                    br
+                    input#homework2.form-control(type='text', placeholder='Homework 2' name='homework2')
+                    br
+                    input#homework3.form-control(type='text', placeholder='Homework 3' name='homework3')
+                    br
+                    input#homework4.form-control(type='text', placeholder='Homework 4' name='homework4')
+                    br
+                    textarea#notes.form-control(placeholder='notes' name='notes')
+                    br
+
+                div#right
+
+                    h2 Links:
+                    input#link1title.form-control(type='text', placeholder='Link 1 title' name='link1title')
+                    br
+                    input#link1.form-control(type='text', placeholder='Link 1' name='link1')
+                    br
+                    input#link2title.form-control(type='text', placeholder='Link 2 title' name='link2title')
+                    br
+                    input#link2.form-control(type='text', placeholder='Link 2' name='link2')
+                    br
+                    input#link3title.form-control(type='text', placeholder='Link 3 title' name='link3title')
+                    br
+                    input#link3.form-control(type='text', placeholder='Link 3' name='link3')
+                    br
+                    input#link4title.form-control(type='text', placeholder='Link 4 title' name='link4title')
+                    br
+                    input#link4.form-control(type='text', placeholder='Link 4' name='link4')
+                    br
+                    button#submit.btn.btn-primary(type='submit') Submit
+        div#linkchoices
+            h2 Click to copy
+            each resource in resourcelist
+                button.clickandcopy #{resource}
+                br
+
+    script.
+        $(document).ready(function () {
+            $("#submit").attr('disabled', 'disabled')
+        });
+        function copyToClipboard(text) {
+            let $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val(text).select();
+            document.execCommand("copy");
+            $temp.remove();
+        }
+        $(function () {
+            $('.clickandcopy').click(function () {
+                copyToClipboard($(this).html());
+            })
+        });
+        $(function () {
+            $('input').click(function () {
+                $(this).val('');
+            })
+        })
+
+        let sdata = JSON.parse('!{JSON.stringify(data)}');
+        $(function () {
+            $('select[name="nameselection"]').change(function () {
+                let selname = $(this).val();
+                $("#submit").removeAttr('disabled', 'false');
+                $("#newname").remove();
+                if (selname == 'New Student') {
+                    $("#nameselection").before("</br><input id='newname' class='form-control' type='text' placeholder='Name' name='newname'>");
+                    $('#nameselection').remove();
+                    $('#updateform')[0].reset();
+                } else if (selname == 'Choose a Student') {
+                    $("#submit").attr('disabled', 'disabled');
+                    $('#updateform')[0].reset();
+                }
+                for (item in sdata) {
+                    if (sdata[item].name == selname) {
+                        let work = sdata[item].homework
+                        $('input[name="homework1"]').val(decodeURIComponent(work[1]));
+                        $('input[name="homework2"]').val(decodeURIComponent(work[2]));
+                        $('input[name="homework3"]').val(decodeURIComponent(work[3]));
+                        $('input[name="homework4"]').val(decodeURIComponent(work[4]));
+
+                        let box = sdata[item].links
+                        let titlebox = [];
+                        let urlbox = [];
+                        for (combo in box) {
+                            titlebox.push(combo);
+                            urlbox.push(box[combo]);
+                        }
+                        $('input[name="link1"]').val(decodeURIComponent(urlbox[0]));
+                        $('input[name="link2"]').val(decodeURIComponent(urlbox[1]));
+                        $('input[name="link3"]').val(decodeURIComponent(urlbox[2]));
+                        $('input[name="link4"]').val(decodeURIComponent(urlbox[3]));
+                        $('input[name="link1title"]').val(decodeURIComponent(titlebox[0]));
+                        $('input[name="link2title"]').val(decodeURIComponent(titlebox[1]));
+                        $('input[name="link3title"]').val(decodeURIComponent(titlebox[2]));
+                        $('input[name="link4title"]').val(decodeURIComponent(titlebox[3]));
+                        $('textarea[name="notes"]').val(decodeURIComponent(sdata[item].notes));
+                    }
+                }
+                $("input").each(function () {
+                    if ($(this).val() == 'undefined') {
+                        $(this).val('');
+                    }
+                });
+            });
+        });
